@@ -61,3 +61,21 @@ def test_available_is_never_negative(tmp_path):
         "1,Test,True,oat_milk,Oatmilk,drink_base,1,3,2025-03-07T06:00:00-08:00\n"
     )
     assert load_stores(p)[1].items["oat_milk"].available == 0
+
+
+def test_first_hill_almond_milk_matches_snapshot_row():
+    # Store.csv row: 10482, almond_milk, 38 on hand, 1 reserved
+    body = client.get(f"/stores/{FIRST_HILL}/stock/almond_milk").json()
+    assert body["quantity_on_hand"] == 38
+    assert body["reserved_quantity"] == 1
+    assert body["available"] == 37
+    assert body["in_stock"] is True
+
+
+def test_first_hill_two_pct_milk_matches_snapshot_row():
+    # Store.csv row: 10482, two_pct_milk, 96 on hand, 3 reserved
+    body = client.get(f"/stores/{FIRST_HILL}/stock/two_pct_milk").json()
+    assert body["quantity_on_hand"] == 96
+    assert body["reserved_quantity"] == 3
+    assert body["available"] == 93
+    assert body["in_stock"] is True
